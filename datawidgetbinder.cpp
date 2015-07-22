@@ -22,6 +22,7 @@ void DataWidgetBinder::setModel(QAbstractItemModel *model) {
 	}
 	mModel = model;
 	connect(mModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(mModel, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int)));
 }
 
 QModelIndex DataWidgetBinder::currentIndex() const {
@@ -72,7 +73,7 @@ void DataWidgetBinder::propertyChanged() {
 	if(mEditingWidget) {
 		return;
 	}
-	if(!mModel) {
+	if(!mModel || !mCurrentIndex.isValid()) {
 		return;
 	}
 	mEditingModel = true;
@@ -92,9 +93,19 @@ void DataWidgetBinder::dataChanged(QModelIndex topLeft, QModelIndex bottomRight)
 	if(mEditingModel) {
 		return;
 	}
-	if(mCurrentIndex.isValid() &&
+	if(mCurrentIndex.isValid() && mCurrentIndex.parent() == topLeft.parent() &&
 			mCurrentIndex.row() >= topLeft.row() && mCurrentIndex.row() <= bottomRight.row()) {
 		updateValues();
+	}
+}
+
+void DataWidgetBinder::rowsRemoved(QModelIndex parent, int start, int end) {
+	if(mEditingModel) {
+		return;
+	}
+	if(mCurrentIndex.parent() == parent &&
+			mCurrentIndex.row() >= start && mCurrentIndex.row() <= end) {
+		setCurrentIndex(QModelIndex());
 	}
 }
 

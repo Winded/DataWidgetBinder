@@ -30,6 +30,7 @@ class DataWidgetBinder : public QObject
 	private slots:
 		void propertyChanged();
 		void dataChanged(QModelIndex topLeft, QModelIndex bottomRight);
+		void rowsRemoved(QModelIndex parent, int start, int end);
 
 	private:
 		void updateValues();
