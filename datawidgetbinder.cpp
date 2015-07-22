@@ -62,7 +62,7 @@ void DataWidgetBinder::removeBinding(QWidget *widget) {
 	Binding b = mBindings[widget];
 	assert(widget->metaObject()->indexOfProperty(b.mProperty.toStdString().c_str()) != -1);
 	int sigId = widget->metaObject()->indexOfSignal(widget->metaObject()->normalizedSignature(b.mNotifySignal.toStdString().c_str()));
-	int methodId = metaObject()->indexOfMethod(metaObject()->normalizedSignature("propertyChanged"));
+	int methodId = metaObject()->indexOfMethod(metaObject()->normalizedSignature("propertyChanged()"));
 	metaObject()->disconnect(widget, sigId, this, methodId);
 
 	mBindings.remove(widget);
